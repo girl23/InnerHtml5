@@ -1,0 +1,22 @@
+1、初始化播放器
+
+initVideo(video,result)
+
+video[Video]：要加载的视频对象(对象定义见附：Video)，(JSON格式字串)
+result{Result}: 返回加载结果对象(对象定义见附：Result)，此接口中无Result.Data字段
+
+附：
+
+
+Video
+{
+    Video （string）： 视频URI地址
+    Poster（string）:  视频封面背景图
+}
+
+
+2、暂停播放
+
+pause()
+
+无需参数

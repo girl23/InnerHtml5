@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+<title>媒体播放器</title>
+<link rel="stylesheet" href="src/zy.media.min.css">
+</head>
+<body>
+<div class="zy_media">
+    <video id="myVideo" poster="test.jpg" playsinline webkit-playsinline >
+        <!--<source src="" type="video/mp4">-->
+                  您的客户端不支持HTML5视频播放
+    </video>
+</div>
+<script src="src/zy.media.js"></script>
+<script>
+
+    //初始化播放器视频url
+	function initVideo(video){
+		var vd = null;
+		if(typeof video == "string"){
+			vd = eval('('+video+')');
+		}else{
+			vd = video;
+		}
+		var url   = vd.Video;
+		var bg    = vd.Poster;
+		var title = vd.Title;
+		if(url == undefined || url == null || url == '')
+			return resultBuilder(false, '参数错误');
+		var myVideo = document.getElementById('myVideo');
+		myVideo.poster = bg;
+		myVideo.setAttribute('data-config','{"mediaTitle": "'+title+'"}');
+		
+		var source  = document.createElement('source');
+		source.src  = url ;
+		source.type = "video/mp4";
+		myVideo.appendChild(source);
+		zymedia('video');
+		return resultBuilder(true, '初始化成功');
+	}
+	//initVideo({'Video':'http://bj.bcebos.com/eastedu/media/5b394886af56ad4faee24d66f1097.mp4','Poster':'../examples/test.jpg','Title':'我的测试'});
+	
+	function pause(){
+		var myVideo = document.getElementById('myVideo');
+		myVideo.pause();
+		return resultBuilder(true, '暂停成功');
+	}
+	
+	/*调用IOS客户端的方法*/
+	function callback(func,param){
+        var iframe = document.createElement("iframe");
+        var url= "myapp:" + "&func=" + func;
+        for(var i in param)
+        {
+            url = url + "&" + i + "=" + param[i];
+        }
+        iframe.src = url;
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        iframe.parentNode.removeChild(iframe);
+        iframe = null;
+        return ;
+    }
+	
+	//返回结果对象
+    function resultBuilder(success, message, data) {
+        var result = new Object;
+        if (typeof success !== "boolean") {
+            result.Success = false;
+            result.Message = "resultBuilder error";
+        } else {
+            result.Success = success;
+            if (typeof message == "string") {
+                result.Message = message;
+            }
+            if (!!data) {
+                result.Data = data;
+            }
+        }
+        var ua = window.navigator.userAgent.toLowerCase();
+        var isiOS = /iphone|ipod|ipad/i.test(ua) && !window.MSStream;
+        if(isiOS){
+        	callback('initVideo',result);
+        }else
+			return result;
+    }
+</script>
+</body>
+</html>
